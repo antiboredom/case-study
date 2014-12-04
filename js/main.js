@@ -12,10 +12,15 @@ var visualizers = [];
 
 function load_csv(url) {
   d3.csv(url, function(error, dataset){
+    // save the data globally. FUCK IT
     data = dataset;
+
+    // add any visualizers here
+    // each visualizer MUST have an "update" function
     visualizers.push(new GlobalGoldstein());
     visualizers.push(new MainText());
 
+    // start the animation
     advance();
   });
 }
@@ -28,13 +33,16 @@ function load_csv(url) {
  */
 
 function advance() {
+  // refresh all the visualizers
   visualizers.forEach(function(v) {
     v.update();
   });
 
+  // go to the next data item
   index ++;
   if (index >= data.length) index = 0;
 
+  // rinse and repeat
   setTimeout(advance, interval);
 }
 
