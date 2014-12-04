@@ -1,7 +1,7 @@
 var index = 0;
 var interval = 1000;
 var data;
-
+var timeout;
 var visualizers = [];
 
 /*
@@ -43,7 +43,7 @@ function advance() {
   if (index >= data.length) index = 0;
 
   // rinse and repeat
-  setTimeout(advance, interval);
+  timeout = setTimeout(advance, interval);
 }
 
 
@@ -165,6 +165,7 @@ function search(column, val) {
 
 d3.select('#speed').attr('value', interval).on('change', function(e){
   interval = this.value;
+  clearTimeout(timeout);
   advance();
 });
 
