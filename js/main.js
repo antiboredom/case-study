@@ -162,4 +162,10 @@ function search(column, val) {
   });
 }
 
+
+d3.select('#speed').attr('value', interval).on('change', function(e){
+  interval = this.value;
+  advance();
+});
+
 load_csv('war_peace_sentiment.csv');
