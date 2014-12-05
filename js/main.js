@@ -18,6 +18,9 @@ function load_csv(url) {
     // add any visualizers here
     // each visualizer MUST have an "update" function
     visualizers.push(new GlobalGoldstein());
+    visualizers.push(new SentimentBar('body', 'polarity', 100, 500, 25));
+    visualizers.push(new HorizontalBar('body', 'subjectivity', 100, 500, 25));
+    visualizers.push(new HorizontalBar('body', 'modality', 100, 500, 25));
     visualizers.push(new MainText());
 
     // start the animation
@@ -71,6 +74,7 @@ function GlobalGoldstein() {
 
   this.svg = d3.select('body')
     .append('svg')
+      .attr('class', 'global-goldstein')
       .attr('width', this.width)
       .attr('height', this.height)
 
@@ -117,6 +121,67 @@ GlobalGoldstein.prototype.update = function() {
 
 //End GlobalGoldstein
 
+
+function HorizontalBar(selector, column, max_bars, width, height) {
+  this.width = width;
+  this.height = height;
+  this.column = column;
+  this.max_bars = max_bars;
+  var min = this.min = d3.min(data, function(d) { return +d[column] });
+  var max = this.max = d3.max(data, function(d) { return +d[column] });
+  var padding = this.padding = 2;
+
+  this.svg = d3.select(selector)
+    .append('svg')
+      .attr('class', 'overall-sentiment')
+      .attr('width', this.width)
+      .attr('height', this.height)
+
+  var x = this.x = d3.scale.linear().range([0, max_bars]).domain([min, max]);
+
+  this.color = d3.scale.linear()
+    .domain([0, max_bars])
+    .range(["#ff9999", "#00ff00"]);
+}
+
+HorizontalBar.prototype.data = function() {
+  var items = []
+  for (var i = 0; i < this.x(+data[index][this.column]); i++) {
+    items.push(+data[index][this.column])
+  }
+  return items;
+}
+
+HorizontalBar.prototype.update = function() {
+  var x = this.x;
+  var width = this.width;
+  var max_bars = this.max_bars;
+  var color = this.color;
+
+  var rects = this.svg.selectAll('rect').data(this.data())
+
+  rects.enter()
+    .append('rect')
+    .attr('width', width/max_bars - this.padding)
+    .attr('height', this.height)
+    .attr('y', 0)
+    .attr('x', function(d, i) { return i * width/max_bars })
+    .attr('fill', function(d, i) { return color(i) })
+
+  rects.transition().duration(interval);
+
+  //var rects = this.svg.selectAll('rect').data(this.data()).exit().transition().remove()
+  rects.exit().remove()
+};
+
+var SentimentBar = function(selector, column, max_bars, width, height) {
+  HorizontalBar.apply(this, arguments);
+  this.color = d3.scale.linear()
+    .domain([0, this.max_bars])
+    .range(["#0000ff", "#ff0000"]);
+}
+SentimentBar.prototype = Object.create(HorizontalBar.prototype);
+SentimentBar.prototype.constructor = SentimentBar;
 
 /*
  * MainText()
