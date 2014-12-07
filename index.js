@@ -7,10 +7,11 @@ var app = express(),
 	fs = require('fs');
 
 var server = require('http').Server(app);
-var io = require('socket.io')({
-  transports: ["xhr-polling"],
-  "polling duration": 10
-});
+//var io = require('socket.io')(server, {
+  //transports: ["xhr-polling"],
+  //"polling duration": 10
+//});
+var io = require('socket.io')(server);
 
 //Inputs
 var butStatus;
