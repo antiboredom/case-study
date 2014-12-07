@@ -17,7 +17,7 @@
 
   <div id="left">
     <h1 id="book-title">War And Peace</h1>
-    <h2 id="autho">by Leo Tolstoy</h2>
+    <h2 id="author">by Leo Tolstoy</h2>
     <div id="full-text"></div>
     <div id="horizontal-graphs">
       <div id="sentiment" class="horizontal-graph">
@@ -62,8 +62,12 @@
     </div>
   </div>
 
-  <div id="right"></div>
+  <div id="right">
+    <div id="goldstein-number"></div>
+    <div id="goldstein-bar"></div>
+  </div>
 
+  <script src="/socket.io/socket.io.js"></script>
   <script src="js/d3.js"></script>
   <script src="js/p5.js"></script>
   <script src="js/country_codes.js"></script>

@@ -1,7 +1,10 @@
-var index = 0;
+var index;
 var interval = 4000;
 var data;
 var timeout;
+var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv'];
+var books = [{title: 'War and Peace', author: 'Leo Tolstoy'}, {title: 'Magic Mountain', author: 'Thomas Mann'}]
+var csv_index = 0;
 var visualizers = [];
 
 /*
@@ -14,16 +17,22 @@ function load_csv(url) {
   d3.csv(url, function(error, dataset){
     // save the data globally. FUCK IT
     data = dataset;
+    index = 0;
+    clearTimeout(timeout);
+    d3.select('#book-title').text(books[csv_index].title);
+    d3.select('#author').text(books[csv_index].author);
 
-    // add any visualizers here
-    // each visualizer MUST have an "update" function
-    visualizers.push(new GlobalGoldstein());
-    visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
-    visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
-    visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
-    visualizers.push(new TextFromColumn('#right', 'goldstein_score'));
-    visualizers.push(new VerticalBar('#right', 'goldstein_score', 20, 54, 200));
-    visualizers.push(new MainText());
+    if (visualizers.length == 0) {
+      // add any visualizers here
+      // each visualizer MUST have an "update" function
+      visualizers.push(new GlobalGoldstein());
+      visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
+      visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
+      visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
+      visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
+      visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
+      visualizers.push(new MainText());
+    }
 
     // start the animation
     advance();
@@ -125,6 +134,13 @@ GlobalGoldstein.prototype.update = function() {
     this.svg.select('path')
       .datum(data.slice(index-65, index+15))
       .attr('d', this.line)
+  } else {
+    this.svg.select('path')
+      .datum(data.slice(0, 80))
+      .attr('d', this.line)
+
+    this.svg.select('g.holder')
+      .attr('transform', 'translate(20,0)')
   }
 
   this.svg.select('circle').data([data[index]])
@@ -349,6 +365,12 @@ function search(column, val) {
   });
 }
 
+function next_csv() {
+  csv_index ++;
+  if (csv_index >= csvs.length) csv_index = 0;
+  load_csv(csvs[csv_index]);
+}
+
 
 d3.select('#speed').attr('value', interval).on('change', function(e){
   interval = this.value;
@@ -356,4 +378,20 @@ d3.select('#speed').attr('value', interval).on('change', function(e){
   advance();
 });
 
-load_csv('war_peace_sentiment.csv');
+load_csv(csvs[0]);
+
+var socket = io('http://localhost');
+socket.emit('start', 'connectme!');
+
+socket.on('pot', function (data) {
+  console.log(data);
+});
+
+socket.on('button', function (data) {
+  next_csv();
+  console.log(data);
+});
+
+socket.on('key', function (data) {
+  console.log(data);
+});

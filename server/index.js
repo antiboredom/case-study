@@ -22,12 +22,15 @@ app.all('*', function(request, response, next) {
  });
 
 
-app.configure( function() { 
-  app.use('/js', express.static(__dirname + '/js')); 
-  console.log("Express configured. Listening on port 5000");
+app.configure( function() {
+  app.use('/js', express.static(__dirname + '/js'));
 });
 
-app.configure( function() { 
+app.configure( function() {
+  app.use('/data', express.static(__dirname + '/data'));
+});
+
+app.configure( function() {
   app.use('/css', express.static(__dirname + '/css'));
   console.log("Express configured. Listening on port 5000");
 });
@@ -108,14 +111,14 @@ app.get('/logdata/text/:text/times/:times/lat/:lat/long/:long/position/:position
 		xml.ele('time', clientTime);
 		xml.ele('lat', clientLat);
 		xml.ele('lon', clientLong);
-		
+
 		xml.ele('key', keyStatus);
 		xml.ele('button', butStatus);
 		xml.ele('speed', potStatus);
 		xml.ele('position', deviceStatus);
 
 	var xmlString = xml.end({ pretty: true, indent: '  ', newline: '\n' });
-	
+
 	var outputFilename = './inputs.xml';
 
 	fs.writeFile(outputFilename, xmlString, function(err) {

@@ -1,0 +1,10 @@
+{
+  "Name": "Case Study",
+  "Version": "0.0.1",
+  "dependencies": {
+    "express": "^3.18.3",
+    "logfmt": "^1.2.0",
+    "socket.io": "^1.2.1",
+    "xmlbuilder": "^2.4.5"
+  }
+}
