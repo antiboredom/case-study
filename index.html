@@ -13,7 +13,57 @@
   <div>
     <input type="range" id="speed" value="2000" min="10" max="10000">
   </div>
-  <div id="main-text"></div>
+
+
+  <div id="left">
+    <h1 id="book-title">War And Peace</h1>
+    <h2 id="autho">by Leo Tolstoy</h2>
+    <div id="full-text"></div>
+    <div id="horizontal-graphs">
+      <div id="sentiment" class="horizontal-graph">
+        <div class="key">Tone</div>
+        <div class="bar-holder"></div>
+        <div class="legend">
+          <span style="float:left">Negative</span>
+          <span style="float:right">Positive</span>
+        </div>
+      </div>
+      <div id="subjectivity" class="horizontal-graph">
+        <div class="key">Subjectivity</div>
+        <div class="bar-holder"></div>
+        <div class="legend">
+          <span style="float:left">Subjective</span>
+          <span style="float:right">Objective</span>
+        </div>
+      </div>
+      <div id="modality" class="horizontal-graph">
+        <div class="key">Degree of Certainty</div>
+        <div class="bar-holder"></div>
+        <div class="legend">
+          <span style="float:left">Very Uncertain</span>
+          <span style="float:right">Facts</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="middle">
+    <div id="overall-goldstein"></div>
+    <div id="main-text">
+      <div class="actor">
+        <span class="main-text-key">Actor</span><span class="main-text-value"></span>
+      </div>
+      <div class="event">
+        <span class="main-text-key">Event</span><span class="main-text-value"></span>
+      </div>
+      <div class="victim">
+        <span class="main-text-key">Victim</span><span class="main-text-value"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="right"></div>
+
   <script src="js/d3.js"></script>
   <script src="js/p5.js"></script>
   <script src="js/country_codes.js"></script>

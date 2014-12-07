@@ -1,5 +1,11 @@
+body {
+  background: #333;
+  color: #fff;
+  font: 16px sans-serif;
+}
+
 path {
-  stroke: steelblue;
+  stroke: #fff;
   stroke-width: 1;
   fill: none;
 }
@@ -7,8 +13,95 @@ path {
 .position-marker {
 }
 
-#main-text {
-  position: absolute;
-  bottom: 0px;
-  left: 0;
+/*#main-text {*/
+  /*position: absolute;*/
+  /*bottom: 0px;*/
+  /*left: 0;*/
+/*}*/
+
+.y.axis path {
+  display: none;
+}
+
+.y.axis {
+  color: #fff;
+  font: 10px sans-serif;
+}
+
+.y.axis text {
+  fill: #fff;
+}
+
+#left {
+  float: left;
+  width: 300px;
+}
+
+#middle {
+  float: left;
+  width: 630px;
+}
+
+#right {
+  float: left;
+  width: 50px;
+}
+
+#main-text .main-text-key {
+  color: #ccc;
+  float: left;
+  width: 70px;
+  text-align: right;
+  line-height: 30px;
+}
+
+#main-text .main-text-value {
+  margin-left: 10px;
+  font-size: 30px;
+  float: left;
+  width: 550px;
+}
+
+#main-text div {
+  clear: both;
+  overflow: auto;
+}
+
+#main-text .event .main-text-value {
+  font-size: 70px;
+}
+
+#main-text .event .main-text-key {
+  line-height: 80px;
+}
+
+.column-text {
+  font-size: 50px;
+}
+
+#full-text {
+  font-size: 12px;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+.actor {
+  color: #c4ffcc;
+}
+
+.victim {
+  color: #fdb5b7;
+}
+
+.horizontal-graph {
+  clear: both;
+  overflow: auto;
+  margin-top: 20px;
+}
+.horizontal-graph svg {
+  border: 1px solid #ccc;
+}
+
+.horizontal-graph .legend {
+  font-size: 10px;
 }
