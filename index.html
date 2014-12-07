@@ -12,16 +12,23 @@
 </head>
 
 <body>
-  <div>
-    <input type="range" id="speed" value="2000" min="10" max="10000">
-  </div>
+  <!--<div>-->
+    <!--<input type="range" id="speed" value="2000" min="10" max="10000">-->
+  <!--</div>-->
 
 
   <div id="left">
     <h1 id="book-title">War And Peace</h1>
     <h2 id="author">by Leo Tolstoy</h2>
-    <div id="full-text"></div>
     <div id="horizontal-graphs">
+      <div id="gold" class="horizontal-graph">
+        <div class="key">Goldstein Score</div>
+        <div class="bar-holder"></div>
+        <div class="legend">
+          <span style="float:left">-10.0 (Unconventional Mass Violence)</span>
+          <span style="float:right">+10.0 (Military Surrender)</span>
+        </div>
+      </div>
       <div id="sentiment" class="horizontal-graph">
         <div class="key">Tone</div>
         <div class="bar-holder"></div>
@@ -47,6 +54,7 @@
         </div>
       </div>
     </div>
+    <div id="full-text"></div>
   </div>
 
   <div id="middle">
@@ -64,10 +72,10 @@
     </div>
   </div>
 
-  <div id="right">
-    <div id="goldstein-number"></div>
-    <div id="goldstein-bar"></div>
-  </div>
+  <!--<div id="right">-->
+    <!--<div id="goldstein-number"></div>-->
+    <!--<div id="goldstein-bar"></div>-->
+  <!--</div>-->
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/d3.js"></script>

@@ -38,14 +38,18 @@ path {
 }
 
 #middle {
-  float: left;
-  width: 630px;
+  float: right;
+  width: 670px;
 }
 
 #right {
   text-align: right;
   float: right;
   width: 50px;
+}
+
+#main-text {
+  margin-top: 20px;
 }
 
 #main-text .main-text-key {
@@ -81,11 +85,18 @@ path {
 }
 
 #full-text {
-  font-size: 12px;
+  font-size: 10px;
   padding: 20px;
   border: 1px solid #666;
-  height: 330px;
+  height: 300px;
   overflow: hidden;
+  margin-top: 20px;
+  text-align: justify;
+  line-height: 150%;
+  font-family: serif;
+  /*position: absolute;*/
+  /*width: 258px;*/
+  /*top: 250px;*/
 }
 
 .actor {
@@ -97,8 +108,8 @@ path {
 }
 
 #horizontal-graphs {
-  position: absolute;
-  bottom: 0;
+  /*position: absolute;*/
+  /*top: ;*/
 }
 
 .horizontal-graph {
@@ -118,3 +129,11 @@ path {
   position: absolute;
   bottom: 0;
 }
+
+#book-title, #author {
+  font-weight: normal;
+  text-transform: uppercase;
+  margin:0;
+  padding:0;
+}
+

@@ -20,12 +20,13 @@ function load_csv(url) {
     index = 0;
     clearTimeout(timeout);
     d3.select('#book-title').text(books[csv_index].title);
-    d3.select('#author').text(books[csv_index].author);
+    d3.select('#author').text("by " + books[csv_index].author);
 
     if (visualizers.length == 0) {
       // add any visualizers here
       // each visualizer MUST have an "update" function
       visualizers.push(new GlobalGoldstein());
+      visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25));
       visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
       visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
       visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
@@ -373,10 +374,14 @@ function next_csv() {
 
 
 d3.select('#speed').attr('value', interval).on('change', function(e){
-  interval = this.value;
+  change_speed(this.value);
+});
+
+function change_speed(new_interval) {
+  interval = new_interval;
   clearTimeout(timeout);
   advance();
-});
+}
 
 load_csv(csvs[0]);
 
