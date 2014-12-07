@@ -7,7 +7,10 @@ var app = express(),
 	fs = require('fs');
 
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var io = require('socket.io')({
+  transports: ["xhr-polling"],
+  "polling duration": 10
+});
 
 //Inputs
 var butStatus;
@@ -151,10 +154,10 @@ server.listen(port, function() {
   console.log("Listening on " + port);
 });
 
-io.configure(function () {
-  io.set("transports", ["xhr-polling"]);
-  io.set("polling duration", 10);
-});
+//io.configure(function () {
+  //io.set("transports", ["xhr-polling"]);
+  //io.set("polling duration", 10);
+//});
 
 io.sockets.on('connection', function(socket) {
  socket.on('start', function() {
