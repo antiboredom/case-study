@@ -60,6 +60,10 @@ path {
   line-height: 30px;
 }
 
+#main-text #actor-goldstein, #main-text #victim-goldstein {
+  margin-left: 50px;
+}
+
 #main-text .main-text-value {
   margin-left: 10px;
   font-size: 30px;
@@ -80,6 +84,11 @@ path {
   line-height: 80px;
 }
 
+#main-text .score {
+  /*font-size: 80%;*/
+  opacity: .5;
+}
+
 .column-text {
   font-size: 50px;
 }
@@ -88,12 +97,12 @@ path {
   font-size: 10px;
   padding: 20px;
   border: 1px solid #666;
-  height: 300px;
+  height: 250px;
   overflow: hidden;
   margin-top: 20px;
   text-align: justify;
   line-height: 150%;
-  font-family: serif;
+  /*font-family: serif;*/
   /*position: absolute;*/
   /*width: 258px;*/
   /*top: 250px;*/

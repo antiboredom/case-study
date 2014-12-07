@@ -2,8 +2,8 @@ var index;
 var interval = 4000;
 var data;
 var timeout;
-var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv'];
-var books = [{title: 'War and Peace', author: 'Leo Tolstoy'}, {title: 'Magic Mountain', author: 'Thomas Mann'}]
+var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
+var books = [{title: 'War and Peace', author: 'Leo Tolstoy'}, {title: 'Magic Mountain', author: 'Thomas Mann'}, {title: 'The Man Without Qualities', author: 'Robert Musil'}]
 var csv_index = 0;
 var visualizers = [];
 
@@ -32,6 +32,8 @@ function load_csv(url) {
       visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
       visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
       visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
+      visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
+      visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
       visualizers.push(new MainText());
     }
 
@@ -153,6 +155,86 @@ GlobalGoldstein.prototype.update = function() {
 
 //End GlobalGoldstein
 
+function ActorGoldstein(selector, column, width, height) {
+  this.column = column;
+  this.selector = selector;
+  var dataset = this.dataset = this.data();
+
+  this.margin = {top: 20, right: 10, bottom: 20, left: 10};
+  this.width = width - this.margin.left - this.margin.right;
+  this.height = height - this.margin.top - this.margin.bottom;
+
+  var x = this.x = d3.scale.linear().range([0, this.width]);
+  var y = this.y = d3.scale.linear().range([this.height, 0]);
+
+  this.x.domain([0, dataset.length]);
+	this.y.domain([-10.0, 10.0]);
+
+  this.line = d3.svg.line()
+    .x(function(d, i) { return x(i); })
+    .y(function(d) { return y(+d.goldstein_score); });
+
+  this.svg = d3.select(selector)
+    .append('svg')
+    .attr('class', 'actor-goldstein')
+    .attr("width", this.width + this.margin.left + this.margin.right)
+    .attr("height", this.height + this.margin.top + this.margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+  this.svg.append('g')
+    .attr('class', 'holder')
+    .attr('transform', 'translate(25,0)')
+
+  //var yAxis = d3.svg.axis()
+    //.scale(y)
+    //.orient("left")
+    //.tickSize(-this.width)
+    //.tickFormat(function(d) { return d; });
+
+  //this.svg.append("g")
+      //.attr("class", "y axis")
+      //.attr("transform", "translate(20,0)")
+      //.call(yAxis)
+
+  this.svg.select('g.holder').append('path')
+    .datum(dataset)
+		.attr('class', 'line')
+		.attr('d', this.line);
+}
+
+ActorGoldstein.prototype.update = function() {
+  var old_length = this.dataset.length;
+  var dataset = this.dataset = this.data();
+
+  var x = this.x = d3.scale.linear().range([0, this.width]);
+  var y = this.y = d3.scale.linear().range([this.height, 0]);
+
+  this.x.domain([0, dataset.length]);
+  this.y.domain([-10.0, 10.0]);
+
+  this.line = d3.svg.line()
+    .x(function(d, i) { return x(i); })
+    .y(function(d) { return y(+d.goldstein_score); });
+
+  if (Math.abs(dataset.length - old_length) < 100 ) {
+    this.svg.select('path')
+      .datum(dataset)
+      .transition(interval/4)
+      .attr('d', this.line)
+  } else {
+    this.svg.select('path')
+      .datum(dataset)
+      .attr('d', this.line)
+  }
+
+  d3.select(this.selector).style('display', dataset.length > 5 ? '' : 'none');
+};
+
+ActorGoldstein.prototype.data = function() {
+  return filter(this.column, data[index][this.column]);
+}
+//End GlobalGoldstein
 
 function HorizontalBar(selector, column, max_bars, width, height) {
   this.width = width;
@@ -304,10 +386,17 @@ function MainText() {
 }
 
 MainText.prototype.update = function() {
-  //var main_text = d3.select('body').select('#main-text').text('');
+  var event = data[index].event_description;
+  event = event.replace(', not specified below', '').toUpperCase();
+
+  var score = data[index].goldstein_score;
+  if (+score > 0) score = '+' + score;
 
   var actor1 = data[index].actor1,
       actor2 = data[index].actor2;
+
+  //var actor1_avg_goldstein = average(filter('actor1', actor1), 'goldstein_score');
+  //var actor2_avg_goldstein = average(filter('actor2', actor2), 'goldstein_score');
 
   if (typeof country_codes[actor1] != 'undefined') actor1 = country_codes[actor1];
   if (typeof country_codes[actor2] != 'undefined') actor2 = country_codes[actor2];
@@ -317,7 +406,9 @@ MainText.prototype.update = function() {
 
   d3.select('#main-text .actor .main-text-value').text(actor1);
   d3.select('#main-text .victim .main-text-value').text(actor2);
-  d3.select('#main-text .event .main-text-value').text(data[index].event_description.replace(', not specified below', '').toUpperCase());
+  //d3.select('#main-text .actor .main-text-value').text(actor1 + ' ' + actor1_avg_goldstein);
+  //d3.select('#main-text .victim .main-text-value').text(actor2 + ' ' + actor2_avg_goldstein);
+  d3.select('#main-text .event .main-text-value').html(event + ' <span class="score">['+score+']</span>');
   var text = data[index].orignal_text;
   text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b class="actor">' + actor1 + '</b>');
   text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b class="victim">' + actor2 + '</b>');
@@ -366,9 +457,19 @@ function search(column, val) {
   });
 }
 
+function average(array, column) {
+  return d3.median(array, function(d) { return d[column] });
+}
+
 function next_csv() {
   csv_index ++;
   if (csv_index >= csvs.length) csv_index = 0;
+  load_csv(csvs[csv_index]);
+}
+
+function prev_csv() {
+  csv_index --;
+  if (csv_index < 0) csv_index = csvs.length - 1;
   load_csv(csvs[csv_index]);
 }
 
