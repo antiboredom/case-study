@@ -385,7 +385,7 @@ function change_speed(new_interval) {
 
 load_csv(csvs[0]);
 
-var socket = io('http://localhost');
+var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
 socket.on('pot', function (data) {
