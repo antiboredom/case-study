@@ -486,14 +486,29 @@ MainText.prototype.update = function() {
   actor1 = actor1.replace(/"/g, '').toUpperCase();
   actor2 = actor2.replace(/"/g, '').toUpperCase();
 
+  var color = this.color(parseFloat(score));
   var text = data[index].orignal_text;
-  text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b class="actor">' + actor1 + '</b>');
-  text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b class="victim">' + actor2 + '</b>');
+
+  var sentences = text.match( /[^\.!\?]+[\.!\?]+/g );
+  var sentence_number = data[index].sentence_number.split('_');
+  var sent_index = sentence_number[sentence_number.length-1];
+  var sentence = text;
+
+  for (var i = 0; i < sentences.length; i ++) {
+    if (sentences[i].toUpperCase().indexOf(actor1) > -1 && sentences[i].toUpperCase().indexOf(actor2) > -1) {
+      sentence = sentences[i];
+      sentence = sentence.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_actor">' + actor1 + '</b>');
+      sentence = sentence.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_victim">' + actor2 + '</b>');
+    }
+  }
+
+  text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_actor">' + actor1 + '</b>');
+  text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_victim">' + actor2 + '</b>');
 
   actor1 = actor1.replace(/-/g, '');
   actor2 = actor2.replace(/-/g, '');
 
-  d3.select('#full-text').html(text)
+  d3.select('#full-text').html(sentence)
   //var text_width = d3.select('#full-text').style('width');
   //d3.select('#full-text')
     //.style('transform', 'translate(0px, 0px)')
@@ -506,7 +521,7 @@ MainText.prototype.update = function() {
   //d3.select('#main-text .actor .main-text-value').text(actor1 + ' ' + actor1_avg_goldstein);
   //d3.select('#main-text .victim .main-text-value').text(actor2 + ' ' + actor2_avg_goldstein);
   //d3.select('#main-text .event .main-text-value').html('<span class="score" style="color:'+this.color(parseFloat(score))+';">'+score+'</span> ' + event);
-  d3.select('#main-text .event .main-text-value').html(score + ': ' + event).transition().style('color', this.color(parseFloat(score)));
+  d3.select('#main-text .event .main-text-value').html(score + ': ' + event).transition().style('color', color);
 };
 
 // end main text visualizer
@@ -594,9 +609,11 @@ function change_speed(new_interval) {
 var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
+var potmap = d3.scale.linear().range([0, 20000]).domain([0, 255]);
+
 socket.on('pot', function (data) {
-  console.log(data);
-  change_speed(parseInt(data.pot));
+  console.log(potmap(data.pot));
+  change_speed(potmap(data.pot));
 });
 
 socket.on('button', function (data) {
