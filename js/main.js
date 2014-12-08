@@ -572,9 +572,9 @@ socket.on('pot', function (data) {
 });
 
 socket.on('button', function (data) {
-  if (data.button == 1)
+  if (data.button == '1')
     prev_book();
-  else if (data.button ==2) {
+  else if (data.button == '2') {
     next_bbok();
   }
   console.log(data);
