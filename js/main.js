@@ -387,6 +387,9 @@ VerticalBar.prototype.update = function() {
  */
 
 function MainText() {
+  this.color = d3.scale.linear()
+    .domain([10.0, -10.0])
+    .range(["#ffff00", "#ff0000"]);
   //nothing to do here
 }
 
@@ -413,7 +416,8 @@ MainText.prototype.update = function() {
   d3.select('#main-text .victim .main-text-value').text(actor2);
   //d3.select('#main-text .actor .main-text-value').text(actor1 + ' ' + actor1_avg_goldstein);
   //d3.select('#main-text .victim .main-text-value').text(actor2 + ' ' + actor2_avg_goldstein);
-  d3.select('#main-text .event .main-text-value').html(event + ' <span class="score">['+score+']</span>');
+  //d3.select('#main-text .event .main-text-value').html('<span class="score" style="color:'+this.color(parseFloat(score))+';">'+score+'</span> ' + event);
+  d3.select('#main-text .event .main-text-value').html(score + ': ' + event).transition().style('color', this.color(parseFloat(score)));
   var text = data[index].orignal_text;
   text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b class="actor">' + actor1 + '</b>');
   text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b class="victim">' + actor2 + '</b>');

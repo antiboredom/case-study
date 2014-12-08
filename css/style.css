@@ -62,6 +62,7 @@ path {
 
 #main-text #actor-goldstein, #main-text #victim-goldstein {
   margin-left: 50px;
+  display: none;
 }
 
 #main-text .main-text-value {
@@ -86,7 +87,7 @@ path {
 
 #main-text .score {
   /*font-size: 80%;*/
-  opacity: .5;
+  /*opacity: .5;*/
 }
 
 .column-text {
@@ -109,11 +110,11 @@ path {
 }
 
 .actor {
-  color: #c4ffcc;
+  /*color: #c4ffcc;*/
 }
 
 .victim {
-  color: #fdb5b7;
+  /*color: #fdb5b7;*/
 }
 
 #horizontal-graphs {
