@@ -1,4 +1,6 @@
 body {
+  margin: 0;
+  padding: 0;
   background: #333;
   color: #fff;
   font: 16px sans-serif;
@@ -46,6 +48,14 @@ path {
   text-align: right;
   float: right;
   width: 50px;
+}
+
+#left, #middle {
+  margin-top: 10px;
+}
+
+#left {
+  margin-left: 10px;
 }
 
 #main-text {
