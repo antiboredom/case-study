@@ -629,12 +629,12 @@ function change_speed(new_interval) {
 var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
-var potmap = d3.scale.linear().range([30, 40000]).domain([255, 0]);
+var potmap = d3.scale.linear().range([100, 10000]).domain([255, 0]);
 
 socket.on('pot', function (data) {
   console.log(data);
   var new_interval = potmap(parseInt(data.pot));
-  if (Math.abs(new_interval - interval) > 50) {
+  if (Math.abs(new_interval - interval) > 100) {
     change_speed(new_interval);
   }
 });
