@@ -572,14 +572,14 @@ var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
 socket.on('pot', function (data) {
-  console.log(data);
+  change_speed(parseInt(data.pot));
 });
 
 socket.on('button', function (data) {
   if (data.button == '1') {
     prev_book();
   } else if (data.button == '2') {
-    next_bbok();
+    next_book();
   }
   console.log(data);
 });
