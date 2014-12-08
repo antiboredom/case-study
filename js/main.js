@@ -5,6 +5,7 @@ var timeout;
 var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
 var books = [
   {src: 'csv/war_peace3.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
+  {src: 'csv/rainbow.csv', title: 'Gravity\'s Rainbow', author: 'Thomas Pynchon'}, 
   {src: 'csv/middlemarch.csv', title: 'Middlemarch', author: 'George Eliot'}, 
   {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'}, 
   {src: 'csv/man_without_qualities.csv', title: 'The Man Without Qualities', author: 'Robert Musil'}
