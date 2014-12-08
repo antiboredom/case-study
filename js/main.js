@@ -16,6 +16,7 @@ var visualizers = [];
 function load_csv(url) {
   d3.csv(url, function(error, dataset){
     // save the data globally. FUCK IT
+    d3.select('#splash').style('display', 'none');
     data = dataset;
     index = 0;
     clearTimeout(timeout);
@@ -493,7 +494,6 @@ function change_speed(new_interval) {
   advance();
 }
 
-load_csv(csvs[0]);
 
 var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
@@ -508,5 +508,6 @@ socket.on('button', function (data) {
 });
 
 socket.on('key', function (data) {
+  load_csv(csvs[0]);
   console.log(data);
 });
