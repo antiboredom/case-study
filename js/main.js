@@ -66,6 +66,9 @@ function switch_book(i) {
     visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
     visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
     visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
+    visualizers.push(new TextFromColumn('#percent', 'num', function(){
+      return (100 * (+data[index].num) / data.length).toFixed(5) + '%';
+    }));
     //visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
     //visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
     visualizers.push(new MainText());
@@ -86,35 +89,35 @@ function switch_book(i) {
   advance();
 }
 
-function load_csv(url) {
-  d3.csv(url, function(error, dataset){
-    // save the data globally. FUCK IT
-    d3.select('#splash').style('display', 'none');
-    data = dataset;
-    index = 0;
-    clearTimeout(timeout);
-    d3.select('#book-title').text(books[csv_index].title);
-    d3.select('#author').text("by " + books[csv_index].author);
+//function load_csv(url) {
+  //d3.csv(url, function(error, dataset){
+    //// save the data globally. FUCK IT
+    //d3.select('#splash').style('display', 'none');
+    //data = dataset;
+    //index = 0;
+    //clearTimeout(timeout);
+    //d3.select('#book-title').text(books[csv_index].title);
+    //d3.select('#author').text("by " + books[csv_index].author);
 
-    if (visualizers.length == 0) {
-      // add any visualizers here
-      // each visualizer MUST have an "update" function
-      visualizers.push(new GlobalGoldstein());
-      visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
-      visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
-      visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
-      visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
-      visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
-      visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
-      //visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
-      //visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
-      visualizers.push(new MainText());
-    }
+    //if (visualizers.length == 0) {
+      //// add any visualizers here
+      //// each visualizer MUST have an "update" function
+      //visualizers.push(new GlobalGoldstein());
+      //visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
+      //visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
+      //visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
+      //visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
+      //visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
+      //visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
+      ////visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
+      ////visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
+      //visualizers.push(new MainText());
+    //}
 
-    // start the animation
-    advance();
-  });
-}
+    //// start the animation
+    //advance();
+  //});
+//}
 
 
 /*
@@ -188,13 +191,17 @@ function GlobalGoldstein() {
 		.attr('class', 'line')
 		.attr('d', this.line);
 
+  this.color = d3.scale.linear()
+    .domain([-10, 10])
+    .range(["#ff0000", "#ffff00"]);
+
   this.circle = this.svg.select('g.holder').append('circle')
     .data([data[index]])
     .attr('class', 'position-marker')
     .attr('cx', function(d){ return x(+d.num)})
     .attr('cy', function(d){ return y(+d.goldstein_score)})
     .attr('r', 5)
-    .attr('fill', 'red')
+    .attr('fill', this.color(+data[index].goldstein_score))
 }
 
 GlobalGoldstein.prototype.update = function() {
@@ -225,6 +232,7 @@ GlobalGoldstein.prototype.update = function() {
     .duration(interval/2)
     .attr('cx', function(d){ return x(+d.num)})
     .attr('cy', function(d){ return y(+d.goldstein_score)})
+    .attr('fill', this.color(+data[index].goldstein_score))
 };
 
 //End GlobalGoldstein
@@ -493,12 +501,14 @@ MainText.prototype.update = function() {
   var sentence_number = data[index].sentence_number.split('_');
   var sent_index = sentence_number[sentence_number.length-1];
   var sentence = text;
-
-  for (var i = 0; i < sentences.length; i ++) {
-    if (sentences[i].toUpperCase().indexOf(actor1) > -1 && sentences[i].toUpperCase().indexOf(actor2) > -1) {
-      sentence = sentences[i];
-      sentence = sentence.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_actor">' + actor1 + '</b>');
-      sentence = sentence.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_victim">' + actor2 + '</b>');
+  
+  if (sentences) {
+    for (var i = 0; i < sentences.length; i ++) {
+      if (sentences[i].toUpperCase().indexOf(actor1) > -1 && sentences[i].toUpperCase().indexOf(actor2) > -1) {
+        sentence = sentences[i];
+        sentence = sentence.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_actor">' + actor1 + '</b>');
+        sentence = sentence.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b style="background-color:#fff;color:#000" class="f_victim">' + actor2 + '</b>');
+      }
     }
   }
 
@@ -540,7 +550,14 @@ ActorGraph.prototype.update = function() {
  * Show value from a single column
  *
  */
-function TextFromColumn(selector, column) {
+function TextFromColumn(selector, column, val_cb) {
+  if (typeof val_cb == 'function') {
+    this.val_cb = val_cb;
+  } else {
+    this.val_cb = function() {
+      return data[index][column];
+    }
+  }
   this.column = column;
   this.el = d3.select(selector)
     .append('div')
@@ -548,7 +565,8 @@ function TextFromColumn(selector, column) {
 }
 
 TextFromColumn.prototype.update = function() {
-  this.el.text(data[index][this.column])
+  this.el.text(this.val_cb())
+  //this.el.text(data[index][this.column])
 }
 
 // end TextFromColumn
@@ -609,11 +627,11 @@ function change_speed(new_interval) {
 var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
-var potmap = d3.scale.linear().range([0, 20000]).domain([0, 255]);
+var potmap = d3.scale.linear().range([0, 20000]).domain([255, 0]);
 
 socket.on('pot', function (data) {
-  console.log(potmap(data.pot));
-  change_speed(potmap(data.pot));
+  console.log(data);
+  change_speed(potmap(parseInt(data.pot)));
 });
 
 socket.on('button', function (data) {

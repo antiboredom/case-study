@@ -155,6 +155,12 @@ body, html {
   border: 1px solid #666;
 }
 
+.meter-holder {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #666;
+}
+
 .legend {
   font-size: 10px;
 }
@@ -198,4 +204,13 @@ body, html {
   font-size: 14px;
   font-weight: bold;
   fill: #ccc;
+}
+
+#percent {
+  margin-top: 20px;
+}
+
+#percent .column-text {
+  border: 1px solid #666;
+  padding: 5px;
 }
