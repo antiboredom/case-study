@@ -83,7 +83,7 @@ body, html {
 
 #main-text .main-text-value {
   margin-left: 10px;
-  font-size: 30px;
+  font-size: 35px;
   float: left;
   width: 550px;
 }
@@ -94,11 +94,11 @@ body, html {
 }
 
 #main-text .event .main-text-value {
-  font-size: 50px;
+  font-size: 60px;
 }
 
 #main-text .event .main-text-key {
-  line-height: 50px;
+  line-height: 60px;
 }
 
 #main-text .score {
@@ -112,7 +112,7 @@ body, html {
 
 #full-text {
   /*white-space: pre;*/
-  font-size: 12px;
+  font-size: 14px;
   /*height: 250px;*/
   overflow: hidden;
   margin-top: 8px;

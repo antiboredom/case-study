@@ -633,7 +633,10 @@ var potmap = d3.scale.linear().range([30, 40000]).domain([255, 0]);
 
 socket.on('pot', function (data) {
   console.log(data);
-  change_speed(potmap(parseInt(data.pot)));
+  var new_interval = potmap(parseInt(data.pot));
+  if (Math.abs(new_interval - interval) > 50) {
+    change_speed(new_interval);
+  }
 });
 
 socket.on('button', function (data) {
