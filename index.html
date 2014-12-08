@@ -20,15 +20,20 @@
   <div id="left">
     <h1 id="book-title">War And Peace</h1>
     <h2 id="author">by Leo Tolstoy</h2>
+    <div id="power-gauge"></div>
+    <div class="legend">
+      <span style="float:right">Unconventional Mass Violence</span>
+      <span style="float:left">Military Surrender</span>
+    </div>
     <div id="horizontal-graphs">
-      <div id="gold" class="horizontal-graph">
-        <div class="key">Goldstein Score</div>
-        <div class="bar-holder"></div>
-        <div class="legend">
-          <span style="float:left">+10.0 (Military Surrender)</span>
-          <span style="float:right">(Unconventional Mass Violence) -10.0</span>
-        </div>
-      </div>
+      <!--<div id="gold" class="horizontal-graph">-->
+        <!--<div class="key">Goldstein Score</div>-->
+        <!--<div class="bar-holder"></div>-->
+        <!--<div class="legend">-->
+          <!--<span style="float:left">+10.0 (Military Surrender)</span>-->
+          <!--<span style="float:right">(Unconventional Mass Violence) -10.0</span>-->
+        <!--</div>-->
+      <!--</div>-->
       <div id="sentiment" class="horizontal-graph">
         <div class="key">Tone</div>
         <div class="bar-holder"></div>
@@ -86,7 +91,7 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/d3.js"></script>
-  <script src="js/p5.js"></script>
+  <script src="js/meter.js"></script>
   <script src="js/country_codes.js"></script>
   <!--<script src="js/main2.js"></script>-->
   <script src="js/main.js"></script>

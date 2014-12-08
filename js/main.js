@@ -5,6 +5,7 @@ var timeout;
 var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
 var books = [
   {src: 'csv/war_peace3.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
+  {src: 'csv/middlemarch.csv', title: 'Middlemarch', author: 'George Eliot'}, 
   {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'}, 
   {src: 'csv/man_without_qualities.csv', title: 'The Man Without Qualities', author: 'Robert Musil'}
 ];
@@ -67,6 +68,17 @@ function switch_book(i) {
     //visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
     //visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
     visualizers.push(new MainText());
+    var powerGauge = gauge('#power-gauge', {
+      size: 300,
+      clipWidth: 300,
+      clipHeight: 160,
+      ringWidth: 60,
+      maxValue: 10,
+      minValue: -10,
+      transitionMs: 4000,
+    });
+    powerGauge.render();
+    visualizers.push(powerGauge);
   }
 
   // start the animation
@@ -480,7 +492,14 @@ MainText.prototype.update = function() {
   actor1 = actor1.replace(/-/g, '');
   actor2 = actor2.replace(/-/g, '');
 
-  d3.select('#full-text').html(text);
+  d3.select('#full-text').html(text)
+  var text_width = d3.select('#full-text').style('width');
+  d3.select('#full-text')
+    .style('transform', 'translate(0px, 0px)')
+    .transition()
+    .duration(interval)
+    .style('transform', 'translate(-'+text_width+', 0)')
+
   d3.select('#main-text .actor .main-text-value').text(actor1);
   d3.select('#main-text .victim .main-text-value').text(actor2);
   //d3.select('#main-text .actor .main-text-value').text(actor1 + ' ' + actor1_avg_goldstein);
@@ -575,19 +594,21 @@ var socket = io('http://casestudy.herokuapp.com');
 socket.emit('start', 'connectme!');
 
 socket.on('pot', function (data) {
+  console.log(data);
   change_speed(parseInt(data.pot));
 });
 
 socket.on('button', function (data) {
+  console.log(data);
   if (data.button == '1') {
     prev_book();
   } else if (data.button == '2') {
     next_book();
   }
-  console.log(data);
 });
 
 socket.on('key', function (data) {
+  console.log(data);
   //load_csv(csvs[0]);
   switch_book(0);
 });
