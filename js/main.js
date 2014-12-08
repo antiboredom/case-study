@@ -10,6 +10,7 @@ var books = [
 ];
 var csv_index = 0;
 var visualizers = [];
+var ready = false;
 
 /*
  *
@@ -25,6 +26,7 @@ function preload() {
     load_it(i, function() {
       total --;
       if (total == 0) {
+        ready = true;
         d3.select('#splash').text('> ready _');
       }
     });
@@ -39,6 +41,7 @@ function load_it(i, cb) {
 }
 
 function switch_book(i) {
+  if (!ready) return false;
   if (!books[i].data) {
     preload();
   }
@@ -587,7 +590,6 @@ socket.on('button', function (data) {
 socket.on('key', function (data) {
   //load_csv(csvs[0]);
   switch_book(0);
-  console.log(data);
 });
 
 socket.on('reset', function (data) {
