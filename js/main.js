@@ -32,8 +32,8 @@ function load_csv(url) {
       visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
       visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
       visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
-      visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
-      visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
+      //visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
+      //visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
       visualizers.push(new MainText());
     }
 
