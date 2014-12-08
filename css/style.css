@@ -94,11 +94,11 @@ body, html {
 }
 
 #main-text .event .main-text-value {
-  font-size: 60px;
+  font-size: 50px;
 }
 
 #main-text .event .main-text-key {
-  line-height: 80px;
+  line-height: 50px;
 }
 
 #main-text .score {
@@ -112,7 +112,7 @@ body, html {
 
 #full-text {
   /*white-space: pre;*/
-  font-size: 10px;
+  font-size: 12px;
   /*height: 250px;*/
   overflow: hidden;
   margin-top: 8px;
