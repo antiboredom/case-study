@@ -618,7 +618,7 @@ d3.select('#speed').attr('value', interval).on('change', function(e){
 });
 
 function change_speed(new_interval) {
-  if (ready) {
+  if (ready && timeout) {
     interval = new_interval;
     clearTimeout(timeout);
     advance();
