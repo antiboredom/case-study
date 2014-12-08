@@ -494,12 +494,12 @@ MainText.prototype.update = function() {
   actor2 = actor2.replace(/-/g, '');
 
   d3.select('#full-text').html(text)
-  var text_width = d3.select('#full-text').style('width');
-  d3.select('#full-text')
-    .style('transform', 'translate(0px, 0px)')
-    .transition()
-    .duration(interval)
-    .style('transform', 'translate(-'+text_width+', 0)')
+  //var text_width = d3.select('#full-text').style('width');
+  //d3.select('#full-text')
+    //.style('transform', 'translate(0px, 0px)')
+    //.transition()
+    //.duration(interval)
+    //.style('transform', 'translate(-'+text_width+', 0)')
 
   d3.select('#main-text .actor .main-text-value').text(actor1);
   d3.select('#main-text .victim .main-text-value').text(actor2);

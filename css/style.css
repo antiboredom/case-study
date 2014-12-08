@@ -111,20 +111,25 @@ body, html {
 }
 
 #full-text {
-  white-space: pre;
+  /*white-space: pre;*/
   font-size: 10px;
-  height: 250px;
+  /*height: 250px;*/
   overflow: hidden;
-  margin-top: 20px;
+  margin-top: 8px;
+  margin-left: 10px;
   text-align: justify;
   line-height: 150%;
+  /*margin-right: 20px;*/
+  width: 550px;
+  float: left;
+  padding: 0;
   /*font-family: serif;*/
   /*position: absolute;*/
   /*width: 258px;*/
   /*top: 250px;*/
-  position: absolute;
-  bottom: 0;
-  height: auto;
+  /*position: absolute;*/
+  /*bottom: 0;*/
+  /*height: auto;*/
 }
 
 .actor {
