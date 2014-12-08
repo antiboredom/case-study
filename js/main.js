@@ -3,7 +3,11 @@ var interval = 4000;
 var data;
 var timeout;
 var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
-var books = [{title: 'War and Peace', author: 'Leo Tolstoy'}, {title: 'Magic Mountain', author: 'Thomas Mann'}, {title: 'The Man Without Qualities', author: 'Robert Musil'}]
+var books = [
+  {src: 'csv/war_peace_sentiment.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
+  {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'}, 
+  {src: 'csv/man_without_qualities.csv', title: 'The Man Without Qualities', author: 'Robert Musil'}
+];
 var csv_index = 0;
 var visualizers = [];
 
@@ -12,6 +16,59 @@ var visualizers = [];
  * Loads a csv from a url, sets up visualizers
  *
  */
+
+var datasets = [];
+
+function preload() {
+  var total = books.length;
+  for (var i = 0; i < books.length; i++) {
+    load_it(i, function() {
+      total --;
+      //if (total == 0) {
+        //switch_book(0);
+      //}
+    });
+  }
+}
+
+function load_it(i, cb) {
+  d3.csv(books[i].src, function(error, d){
+    books[i].data = d;
+    cb();
+  });
+}
+
+function switch_book(i) {
+  if (!books[i].data) {
+    preload();
+  }
+  d3.select('#splash').style('display', 'none');
+
+  data = books[i].data;
+  index = 0;
+
+  clearTimeout(timeout);
+  d3.select('#book-title').text(books[i].title);
+  d3.select('#author').text("by " + books[i].author);
+
+  if (visualizers.length == 0) {
+    // add any visualizers here
+    // each visualizer MUST have an "update" function
+    visualizers.push(new GlobalGoldstein());
+    visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
+    visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
+    visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
+    visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
+    visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
+    visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
+    //visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
+    //visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
+    visualizers.push(new MainText());
+  }
+
+  // start the animation
+  advance();
+}
 
 function load_csv(url) {
   d3.csv(url, function(error, dataset){
@@ -483,6 +540,18 @@ function prev_csv() {
   load_csv(csvs[csv_index]);
 }
 
+function next_book() {
+  csv_index ++;
+  if (csv_index >= books.length) csv_index = 0;
+  switch_book(csv_index);
+}
+
+function prev_book() {
+  csv_index --;
+  if (csv_index < 0) csv_index = books.length - 1;
+  switch_book(csv_index);
+}
+
 
 d3.select('#speed').attr('value', interval).on('change', function(e){
   change_speed(this.value);
@@ -503,11 +572,18 @@ socket.on('pot', function (data) {
 });
 
 socket.on('button', function (data) {
-  next_csv();
+  if (data.button == 1)
+    prev_book();
+  else if (data.button ==2) {
+    next_bbok();
+  }
   console.log(data);
 });
 
 socket.on('key', function (data) {
-  load_csv(csvs[0]);
+  //load_csv(csvs[0]);
+  switch_book(0);
   console.log(data);
 });
+
+preload();
