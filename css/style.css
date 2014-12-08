@@ -6,6 +6,11 @@ body {
   font: 16px sans-serif;
 }
 
+body, html {
+  width: 100%;
+  height: 100%;
+}
+
 path {
   stroke: #fff;
   stroke-width: 1;

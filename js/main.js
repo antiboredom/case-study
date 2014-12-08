@@ -4,7 +4,7 @@ var data;
 var timeout;
 var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
 var books = [
-  {src: 'csv/war_peace_sentiment.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
+  {src: 'csv/war_peace3.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
   {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'}, 
   {src: 'csv/man_without_qualities.csv', title: 'The Man Without Qualities', author: 'Robert Musil'}
 ];
@@ -24,9 +24,9 @@ function preload() {
   for (var i = 0; i < books.length; i++) {
     load_it(i, function() {
       total --;
-      //if (total == 0) {
-        //switch_book(0);
-      //}
+      if (total == 0) {
+        d3.select('#splash').text('> ready _');
+      }
     });
   }
 }
@@ -56,7 +56,7 @@ function switch_book(i) {
     // each visualizer MUST have an "update" function
     visualizers.push(new GlobalGoldstein());
     visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
-    visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
+    visualizers.push(new HorizontalBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
     visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
     visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
     visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
@@ -470,16 +470,20 @@ MainText.prototype.update = function() {
   actor1 = actor1.replace(/"/g, '').toUpperCase();
   actor2 = actor2.replace(/"/g, '').toUpperCase();
 
+  var text = data[index].orignal_text;
+  text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b class="actor">' + actor1 + '</b>');
+  text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b class="victim">' + actor2 + '</b>');
+
+  actor1 = actor1.replace(/-/g, '');
+  actor2 = actor2.replace(/-/g, '');
+
+  d3.select('#full-text').html(text);
   d3.select('#main-text .actor .main-text-value').text(actor1);
   d3.select('#main-text .victim .main-text-value').text(actor2);
   //d3.select('#main-text .actor .main-text-value').text(actor1 + ' ' + actor1_avg_goldstein);
   //d3.select('#main-text .victim .main-text-value').text(actor2 + ' ' + actor2_avg_goldstein);
   //d3.select('#main-text .event .main-text-value').html('<span class="score" style="color:'+this.color(parseFloat(score))+';">'+score+'</span> ' + event);
   d3.select('#main-text .event .main-text-value').html(score + ': ' + event).transition().style('color', this.color(parseFloat(score)));
-  var text = data[index].orignal_text;
-  text = text.replace(new RegExp('\\b' + actor1 + '\\b', 'gi'), '<b class="actor">' + actor1 + '</b>');
-  text = text.replace(new RegExp('\\b' + actor2 + '\\b', 'gi'), '<b class="victim">' + actor2 + '</b>');
-  d3.select('#full-text').html(text);
 };
 
 // end main text visualizer
@@ -572,9 +576,9 @@ socket.on('pot', function (data) {
 });
 
 socket.on('button', function (data) {
-  if (data.button == '1')
+  if (data.button == '1') {
     prev_book();
-  else if (data.button == '2') {
+  } else if (data.button == '2') {
     next_bbok();
   }
   console.log(data);
@@ -584,6 +588,10 @@ socket.on('key', function (data) {
   //load_csv(csvs[0]);
   switch_book(0);
   console.log(data);
+});
+
+socket.on('reset', function (data) {
+  d3.select('#splash').style('display', 'block');
 });
 
 preload();

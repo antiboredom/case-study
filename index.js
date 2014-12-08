@@ -72,6 +72,13 @@ app.get('/button/:button', function (request, response) {
 	response.send(butStatus);
 });
 
+app.get('/reset', function (request, response) {
+  connections.forEach(function(c) {
+    c.emit('reset', {'status': 'reset'});
+  });
+	response.send('reset');
+});
+
 app.get('/butStatus*', function (request, response) {
 	response.send(butStatus);
 });
