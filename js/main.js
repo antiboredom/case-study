@@ -26,7 +26,7 @@ function load_csv(url) {
       // add any visualizers here
       // each visualizer MUST have an "update" function
       visualizers.push(new GlobalGoldstein());
-      visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25));
+      visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
       visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
       visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
       visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
@@ -236,7 +236,8 @@ ActorGoldstein.prototype.data = function() {
 }
 //End GlobalGoldstein
 
-function HorizontalBar(selector, column, max_bars, width, height) {
+function HorizontalBar(selector, column, max_bars, width, height, reverse) {
+  this.reverse = (typeof reverse == 'boolean' ? reverse : false);
   this.width = width;
   this.height = height;
   this.column = column;
@@ -251,11 +252,15 @@ function HorizontalBar(selector, column, max_bars, width, height) {
       .attr('width', this.width)
       .attr('height', this.height)
 
-  var x = this.x = d3.scale.linear().range([0, max_bars]).domain([min, max]);
+  if (this.reverse === true) {
+    var x = this.x = d3.scale.linear().range([0, max_bars]).domain([max, min]);
+  } else {
+    var x = this.x = d3.scale.linear().range([0, max_bars]).domain([min, max]);
+  }
 
   this.color = d3.scale.linear()
     .domain([0, max_bars])
-    .range(["#ff9999", "#00ff00"]);
+    .range(["#ffff00", "#ff0000"]);
 }
 
 HorizontalBar.prototype.data = function() {
