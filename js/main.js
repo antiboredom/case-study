@@ -4,15 +4,16 @@ var data;
 var timeout;
 var csvs = ['csv/war_peace_sentiment.csv', 'csv/magic_mountain.csv', 'csv/man_without_qualities.csv'];
 var books = [
-  {src: 'csv/war_peace3.csv', title: 'War and Peace', author: 'Leo Tolstoy'}, 
-  {src: 'csv/rainbow.csv', title: 'Gravity\'s Rainbow', author: 'Thomas Pynchon'}, 
-  {src: 'csv/middlemarch.csv', title: 'Middlemarch', author: 'George Eliot'}, 
-  {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'}, 
+  {src: 'csv/war_peace3.csv', title: 'War and Peace', author: 'Leo Tolstoy'},
+  {src: 'csv/rainbow.csv', title: 'Gravity\'s Rainbow', author: 'Thomas Pynchon'},
+  {src: 'csv/middlemarch.csv', title: 'Middlemarch', author: 'George Eliot'},
+  {src: 'csv/magic_mountain.csv', title: 'Magic Mountain', author: 'Thomas Mann'},
   {src: 'csv/man_without_qualities.csv', title: 'The Man Without Qualities', author: 'Robert Musil'}
 ];
 var csv_index = 0;
 var visualizers = [];
 var ready = false;
+var speaking_message = '';
 
 /*
  *
@@ -59,6 +60,7 @@ function switch_book(i) {
   if (visualizers.length == 0) {
     // add any visualizers here
     // each visualizer MUST have an "update" function
+    //visualizers.push(new SmoothedGlobalGoldstein());
     visualizers.push(new GlobalGoldstein());
     visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
     visualizers.push(new HorizontalBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
@@ -83,41 +85,13 @@ function switch_book(i) {
     });
     powerGauge.render();
     visualizers.push(powerGauge);
+  } else {
+    //visualizers[0].update_book();
   }
 
   // start the animation
   advance();
 }
-
-//function load_csv(url) {
-  //d3.csv(url, function(error, dataset){
-    //// save the data globally. FUCK IT
-    //d3.select('#splash').style('display', 'none');
-    //data = dataset;
-    //index = 0;
-    //clearTimeout(timeout);
-    //d3.select('#book-title').text(books[csv_index].title);
-    //d3.select('#author').text("by " + books[csv_index].author);
-
-    //if (visualizers.length == 0) {
-      //// add any visualizers here
-      //// each visualizer MUST have an "update" function
-      //visualizers.push(new GlobalGoldstein());
-      //visualizers.push(new HorizontalBar('#gold .bar-holder', 'goldstein_score', 20, 298, 25, true));
-      //visualizers.push(new SentimentBar('#sentiment .bar-holder', 'polarity', 100, 298, 25));
-      //visualizers.push(new HorizontalBar('#subjectivity .bar-holder', 'subjectivity', 100, 298, 25));
-      //visualizers.push(new HorizontalBar('#modality .bar-holder', 'modality', 100, 298, 25));
-      //visualizers.push(new TextFromColumn('#goldstein-number', 'goldstein_score'));
-      //visualizers.push(new VerticalBar('#goldstein-bar', 'goldstein_score', 20, 54, 600));
-      ////visualizers.push(new ActorGoldstein('#actor-goldstein', 'actor1', 500, 50));
-      ////visualizers.push(new ActorGoldstein('#victim-goldstein', 'actor2', 500, 50));
-      //visualizers.push(new MainText());
-    //}
-
-    //// start the animation
-    //advance();
-  //});
-//}
 
 
 /*
@@ -129,7 +103,8 @@ function switch_book(i) {
 function advance() {
   // refresh all the visualizers
   visualizers.forEach(function(v) {
-    v.update();
+    if (typeof v.update == 'function')
+      v.update();
   });
 
   // go to the next data item
@@ -140,6 +115,61 @@ function advance() {
   timeout = setTimeout(advance, interval);
 }
 
+function SmoothedGlobalGoldstein() {
+  this.margin = {top: 20, right: 10, bottom: 20, left: 10};
+  this.width = 640 - this.margin.left - this.margin.right;
+  this.height = 150 - this.margin.top - this.margin.bottom;
+
+  var x = this.x = d3.scale.linear().range([0, this.width]);
+  var y = this.y = d3.scale.linear().range([this.height, 0]);
+
+  this.x.domain([1, data.length+1]);
+	this.y.domain([-10.0, 10.0]);
+
+  this.line = d3.svg.line()
+    .x(function(d, i) { return x(i); })
+    .y(function(d, i) { return y(d); });
+
+  this.svg = d3.select('body')
+    .append('svg')
+
+  this.svg.attr('class', 'global-goldstein')
+    .attr("width", this.width + this.margin.left + this.margin.right)
+    .attr("height", this.height + this.margin.top + this.margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+  var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .tickSize(-this.width)
+    .tickFormat(function(d) { return d; });
+
+  this.svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(20,0)")
+      .call(yAxis)
+
+  this.svg.append('path')
+    .datum(moving_window_avg(data, 10, 'goldstein_score'))
+		.attr('class', 'line')
+		.attr('d', this.line);
+
+  this.color = d3.scale.linear()
+    .domain([-10, 10])
+    .range(["#ff0000", "#ffff00"]);
+}
+
+SmoothedGlobalGoldstein.prototype.update_book = function() {
+  var x = this.x;
+  var y = this.y;
+
+  this.svg.selectAll('path').remove();
+
+  this.svg.append('path')
+    .datum(moving_window_avg(data, 10, 'goldstein_score'))
+    .attr('d', this.line);
+};
 
 /*
  *
@@ -218,7 +248,9 @@ GlobalGoldstein.prototype.update = function() {
     this.svg.select('path')
       .datum(data.slice(index-65, index+15))
       .attr('d', this.line)
+
   } else {
+
     this.svg.select('path')
       .datum(data.slice(0, 80))
       .attr('d', this.line)
@@ -501,7 +533,7 @@ MainText.prototype.update = function() {
   var sentence_number = data[index].sentence_number.split('_');
   var sent_index = sentence_number[sentence_number.length-1];
   var sentence = text;
-  
+
   if (sentences) {
     for (var i = 0; i < sentences.length; i ++) {
       if (sentences[i].toUpperCase().indexOf(actor1) > -1 && sentences[i].toUpperCase().indexOf(actor2) > -1) {
@@ -519,6 +551,7 @@ MainText.prototype.update = function() {
   actor2 = actor2.replace(/-/g, '');
 
   d3.select('#full-text').html(sentence)
+  speak(d3.select('#full-text').text());
   //var text_width = d3.select('#full-text').style('width');
   //d3.select('#full-text')
     //.style('transform', 'translate(0px, 0px)')
@@ -588,6 +621,24 @@ function average(array, column) {
   return d3.median(array, function(d) { return d[column] });
 }
 
+function moving_window_avg (original_arr, step, key) {  // Window size = 2 * step + 1
+  var arr = original_arr.slice(0);
+  return arr.map(function (_, idx) {
+    var wnd = arr.slice(idx - step, idx + step + 1);
+    if (typeof key != 'undefined') {
+      var sum = d3.sum(wnd, function(d) {return d[key]}) / wnd.length;
+      if (isNaN(sum)) { sum = _[key]; }
+      //_[key] = sum;
+      //return _;
+      return sum;
+    } else {
+      var result = d3.sum(wnd) / wnd.length;
+      if (isNaN(result)) { result = _; }
+      return result;
+    }
+  });
+};
+
 function next_csv() {
   csv_index ++;
   if (csv_index >= csvs.length) csv_index = 0;
@@ -610,6 +661,30 @@ function prev_book() {
   csv_index --;
   if (csv_index < 0) csv_index = books.length - 1;
   switch_book(csv_index);
+}
+
+function speak(txt) {
+  if (txt == speaking_message) return false;
+  speaking_message = txt;
+  speechSynthesis.cancel();
+  var msg = new SpeechSynthesisUtterance();
+  //var voices = window.speechSynthesis.getVoices();
+  //console.log(voices);
+  //msg.voice = voices[10]; // Note: some voices don't support altering params
+  //msg.voiceURI = 'native';
+  msg.volume = 1; // 0 to 1
+  msg.rate = 1.2; // 0.1 to 10
+  //msg.pitch = 2; //0 to 2
+  msg.text = txt;
+  //msg.lang = 'en-US';
+
+  //msg.onend = function(e) {
+    //console.log('Finished in ' + event.elapsedTime + ' seconds.');
+  //};
+
+  speechSynthesis.speak(msg);
+  //var msg = new SpeechSynthesisUtterance(txt);
+  //window.speechSynthesis.speak(msg);
 }
 
 
